@@ -1,0 +1,5 @@
+Commands
+-----------
+Add docu =>
+insertOne - 1 document
+insertMany - many document
