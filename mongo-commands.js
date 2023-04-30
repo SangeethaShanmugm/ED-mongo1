@@ -1,5 +1,5 @@
 // show dbs -> list all dbs
-// use dbName -> switch to dbName
+// use dbName -> create and switch to dbName
 // db -> current db
 
 db.books.insertMany([
@@ -148,13 +148,113 @@ db.books.find({}, { _id: 0, name: 1, rating: 1 }).sort({ name: 1 }).pretty();
 
 //rating > 8, exclude - _id, include - name, rating, sort- rating - desc, limit - 5
 
-db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).limit(5).pretty();
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .limit(5)
+  .pretty();
+
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ rating: -1 })
+  .skip(3)
+  .pretty();
+
+db.books.findOne({ rating: 8 });
+
+db.books
+  .find({ rating: { $gt: 8 } }, { _id: 0, name: 1, rating: 1 })
+  .sort({ name: 1, rating: -1 })
+  .pretty();
+
+//rating gt & lt
+
+db.books.find({ rating: { $gt: 10, $lte: 3 } }).pretty();
+
+//Query used in Array
+db.orders.insertMany([
+  {
+    _id: 0,
+    item: "Steel Beam",
+    instock: [
+      { category: "A", qty: 10 },
+      { category: "B", qty: 5 },
+    ],
+  },
+  { _id: 1, item: "Steel Beam", instock: [{ category: "B", qty: 15 }] },
+  {
+    _id: 2,
+    item: "Steel Beam",
+    instock: [
+      { category: "A", qty: 50 },
+      { category: "B", qty: 15 },
+    ],
+  },
+  {
+    _id: 3,
+    item: "Iron Rod",
+    instock: [
+      { category: "B", qty: 20 },
+      { category: "C", qty: 5 },
+    ],
+  },
+  {
+    _id: 4,
+    item: "Iron Rod",
+    instock: [
+      { category: "A", qty: 20 },
+      { category: "B", qty: 60 },
+    ],
+  },
+  {
+    _id: 5,
+    item: "Iron Rod",
+    instock: [
+      { category: "C", qty: 30 },
+      { category: "B", qty: 5 },
+    ],
+  },
+]);
+
+db.orders.find().pretty();
+
+db.orders.findOne({ item: "Steel Beam" });
+
+//category A
+
+db.orders.find({ "instock.qty": { $gte: 50 } }).pretty();
+
+//$elemMatch - multiple conditions - array
+
+db.orders
+  .find({ instock: { $elemMatch: { qty: 10, category: "A" } } })
+  .pretty();
+
+db.orders
+  .find({ instock: { $elemMatch: { qty: { $gt: 10, $lte: 40 } } } })
+  .pretty();
+
+db.orders.find({ "instock.qty": { $gt: 10, $lte: 40 } }).pretty();
+
+db.orders.find({ "instock.qty": 10, "instock.category": "B" }).pretty();
+
+db.orders.find({ "instock.category": { $in: ["A", "B"] } }).pretty();
+
+db.orders.find({ $and: [{ "instock.qty": { $ne: 5, $exists: true } }] });
+
+db.orders.find({
+  $and: [
+    { $or: [{ "instock.qty": { $lt: 20 } }, { "instock.qty": { $gt: 80 } }] },
+   { "instock.category": "A"}
+  ],
+});
 
 
-db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ rating: -1 }).skip(3).pretty();
 
 
-db.books.findOne({rating: 8})
+db.orders.find().pretty()
 
 
-db.books.find({rating: { $gt: 8}}, { _id: 0, name: 1, rating: 1 }).sort({ name:1, rating: -1 }).pretty();
+db.orders.updateOne({item: "Iron Rod"},{$set:{item:"Steel Rod"}})
+
+db.orders.updateOne({item: "Steel Rod"},{$set:{price:"20"}})
