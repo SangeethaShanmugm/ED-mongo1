@@ -25,7 +25,7 @@ sudo mongod --configsvr --dbpath data/config2 --port 2012 --replSet rs0
 //Run from any config server
 rs.initiate(
 {
-\_id: "rs0",
+_id: "rs0",
 configsvr: true,
 members: [
 { _id : 0, host : "localhost:2011" },
